@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_cats"
+        android:icon="@drawable/ic_cat"
+        android:title="@string/title_cats"/>
+
+    <item
+        android:id="@+id/navigation_dogs"
+        android:icon="@drawable/ic_dog"
+        android:title="@string/title_dogs"/>
+
+    <item
+        android:id="@+id/navigation_awws"
+        android:icon="@drawable/ic_aww_24dp"
+        android:title="@string/title_aww"/>
+
+    <item
+        android:id="@+id/navigation_saved"
+        android:icon="@drawable/ic_star_24dp"
+        android:title="@string/title_saved"/>
+
+</menu>

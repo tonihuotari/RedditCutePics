@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">RedditCutePics</string>
+    <string name="title_cats">Cats</string>
+    <string name="title_dogs">Dogs</string>
+    <string name="title_aww">Aww</string>
+    <string name="title_saved">Saved</string>
+</resources>
