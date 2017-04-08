@@ -1,4 +1,4 @@
-package com.sombrero.huotari.redditcutepics.net;
+package com.sombrero.huotari.redditcutepics;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.sombrero.huotari.redditcutepics.R;
 import com.sombrero.huotari.redditcutepics.common.ImageLoader;
 import com.sombrero.huotari.redditcutepics.models.RedditItem;
 

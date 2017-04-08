@@ -11,7 +11,6 @@ import com.sombrero.huotari.redditcutepics.common.L;
 import com.sombrero.huotari.redditcutepics.db.DataBaseHelper;
 import com.sombrero.huotari.redditcutepics.models.RedditItem;
 import com.sombrero.huotari.redditcutepics.net.ApiClient;
-import com.sombrero.huotari.redditcutepics.net.ContentFragment;
 
 import java.util.ArrayList;
 
