@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements DBFragment.Listen
 	private ContentFragment mAwwFragment;
 
 	public State mCurrentState = State.CATS;
-	private DataBaseHelper mDataBaseHelper;
 
 	enum State {
 		CATS(R.string.title_cats),
@@ -97,10 +96,7 @@ public class MainActivity extends AppCompatActivity implements DBFragment.Listen
 
 	@Override
 	protected void onDestroy() {
-		if (mDataBaseHelper != null) {
-			mDataBaseHelper.close();
-			mDataBaseHelper = null;
-		}
+		DataBaseHelper.closeInstance();
 		super.onDestroy();
 	}
 
@@ -116,10 +112,7 @@ public class MainActivity extends AppCompatActivity implements DBFragment.Listen
 
 		if (fragment instanceof DBFragment) {
 			mDBFragment = (DBFragment) fragment;
-			if (mDataBaseHelper == null) {
-				mDataBaseHelper = DataBaseHelper.getInstance(this);
-			}
-			mDBFragment.setDataBaseHelper(mDataBaseHelper);
+			mDBFragment.setDataBaseHelper(DataBaseHelper.getInstance(this));
 			mDBFragment.setListener(this);
 		}
 
@@ -162,8 +155,7 @@ public class MainActivity extends AppCompatActivity implements DBFragment.Listen
 	}
 
 	@Override
-	public void onCats(ArrayList<RedditItem> cats) {
-		L.d(TAG, "cats onSuccess: " + cats.size());
+	public void onCats(@NonNull ArrayList<RedditItem> cats) {
 		mCatsFragment = ContentFragment.newInstance(cats);
 
 		if (mCurrentState.equals(State.CATS)) {
@@ -173,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements DBFragment.Listen
 	}
 
 	@Override
-	public void onDogs(ArrayList<RedditItem> dogs) {
+	public void onDogs(@NonNull ArrayList<RedditItem> dogs) {
 		mDogsFragment = ContentFragment.newInstance(dogs);
 
 		if (mCurrentState.equals(State.DOGS)) {
@@ -182,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements DBFragment.Listen
 	}
 
 	@Override
-	public void onAww(ArrayList<RedditItem> awws) {
+	public void onAww(@NonNull ArrayList<RedditItem> awws) {
 		mAwwFragment = ContentFragment.newInstance(awws);
 		if (mCurrentState.equals(State.AWW)) {
 			setContentFragment(mAwwFragment);

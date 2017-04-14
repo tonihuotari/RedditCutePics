@@ -55,7 +55,7 @@ public class DBFragment extends Fragment {
 		RedditItemContract.getItems(mDataBaseHelper, new RedditItemContract.Callback() {
 			@Override
 			public void onResult(ArrayList<RedditItem> items) {
-				if (mFragmentWasPaused) return;
+				if (mFragmentWasPaused || getActivity() == null) return;
 
 				L.d(TAG, "loaded saved items: " + items.size());
 

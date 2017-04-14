@@ -1,5 +1,6 @@
 package com.sombrero.huotari.redditcutepics;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.sombrero.huotari.redditcutepics.common.L;
@@ -26,11 +27,11 @@ public class RequestFragment extends Fragment {
 	private ArrayList<RedditItem> mAwws;
 
 	public interface Listener {
-		void onCats(ArrayList<RedditItem> cats);
+		void onCats(@NonNull ArrayList<RedditItem> cats);
 
-		void onDogs(ArrayList<RedditItem> dogs);
+		void onDogs(@NonNull ArrayList<RedditItem> dogs);
 
-		void onAww(ArrayList<RedditItem> awws);
+		void onAww(@NonNull ArrayList<RedditItem> awws);
 
 		void onFailed();
 	}
@@ -68,7 +69,7 @@ public class RequestFragment extends Fragment {
 		mApiClient.getCats(new ApiClient.ApiCallback<RedditResponse>() {
 			@Override
 			public void onSuccess(RedditResponse response) {
-				if (mFragmentWasPaused) return;
+				if (mFragmentWasPaused || getActivity() == null) return;
 
 				mCats = responseToList(response);
 				mListener.onCats(mCats);
@@ -76,7 +77,7 @@ public class RequestFragment extends Fragment {
 
 			@Override
 			public void onError(ApiErrorException e) {
-				if (mFragmentWasPaused) return;
+				if (mFragmentWasPaused || getActivity() == null) return;
 
 				L.e(TAG, "Load cats failed", e);
 
@@ -89,7 +90,7 @@ public class RequestFragment extends Fragment {
 		mApiClient.getDogs(new ApiClient.ApiCallback<RedditResponse>() {
 			@Override
 			public void onSuccess(RedditResponse response) {
-				if (mFragmentWasPaused) return;
+				if (mFragmentWasPaused || getActivity() == null) return;
 
 				mDogs = responseToList(response);
 				mListener.onDogs(mDogs);
@@ -97,7 +98,7 @@ public class RequestFragment extends Fragment {
 
 			@Override
 			public void onError(ApiErrorException e) {
-				if (mFragmentWasPaused) return;
+				if (mFragmentWasPaused || getActivity() == null) return;
 
 				L.e(TAG, "Load dogs failed", e);
 
@@ -110,7 +111,7 @@ public class RequestFragment extends Fragment {
 		mApiClient.getAwws(new ApiClient.ApiCallback<RedditResponse>() {
 			@Override
 			public void onSuccess(RedditResponse response) {
-				if (mFragmentWasPaused) return;
+				if (mFragmentWasPaused || getActivity() == null) return;
 
 				mAwws = responseToList(response);
 				mListener.onAww(mAwws);
@@ -118,7 +119,7 @@ public class RequestFragment extends Fragment {
 
 			@Override
 			public void onError(ApiErrorException e) {
-				if (mFragmentWasPaused) return;
+				if (mFragmentWasPaused || getActivity() == null) return;
 
 				L.e(TAG, "Load awws failed", e);
 

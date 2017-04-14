@@ -60,7 +60,7 @@ public class ApiClient {
 
 			@Override
 			public void onFailure(Call<RedditResponse> call, Throwable t) {
-				L.d(TAG, "onFailure: " + t.getMessage());
+				L.e(TAG, "makeRequest: onFailure", t);
 				callback.onError(new ApiErrorException(t.getMessage()));
 			}
 		});

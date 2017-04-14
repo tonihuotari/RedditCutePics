@@ -13,10 +13,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	private static DataBaseHelper mInstance;
 
 	public static DataBaseHelper getInstance(Context context) {
-		if(mInstance == null) {
+		if (mInstance == null) {
 			mInstance = new DataBaseHelper(context);
 		}
 		return mInstance;
+	}
+
+	public static void closeInstance() {
+		if (mInstance != null) {
+			mInstance.close();
+		}
 	}
 
 	public DataBaseHelper(Context context) {

@@ -1,6 +1,7 @@
 package com.sombrero.huotari.redditcutepics;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -40,7 +41,7 @@ public class ContentFragment extends Fragment {
 		mListener = listener;
 	}
 
-	public static ContentFragment newInstance(ArrayList<RedditItem> items) {
+	public static ContentFragment newInstance(@NonNull ArrayList<RedditItem> items) {
 		Bundle args = new Bundle();
 		args.putParcelableArrayList(ARGUMENTS_ITEMS, items);
 
