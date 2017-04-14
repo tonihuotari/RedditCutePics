@@ -1,12 +1,10 @@
 package com.sombrero.huotari.redditcutepics.net;
 
-import com.sombrero.huotari.redditcutepics.common.L;
 import com.sombrero.huotari.redditcutepics.net.models.RedditResponse;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Observable;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
@@ -15,16 +13,11 @@ public class ApiClient {
 
 	private ApiService mApiService;
 
-	public interface ApiCallback<T> {
-		void onSuccess(T response);
-
-		void onError(ApiErrorException e);
-	}
-
 	private static ApiService buildApiService() {
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl("https://www.reddit.com/")
 				.addConverterFactory(GsonConverterFactory.create())
+				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 				.build();
 
 		return retrofit.create(ApiService.class);
@@ -34,35 +27,15 @@ public class ApiClient {
 		mApiService = buildApiService();
 	}
 
-	public void getCats(final ApiCallback<RedditResponse> callback) {
-		makeRequest(mApiService.getCats(), callback);
+	public Observable<RedditResponse> getCats() {
+		return mApiService.getCats();
 	}
 
-	public void getDogs(final ApiCallback<RedditResponse> callback) {
-		makeRequest(mApiService.getDogs(), callback);
+	public Observable<RedditResponse> getDogs() {
+		return mApiService.getDogs();
 	}
 
-	public void getAwws(final ApiCallback<RedditResponse> callback) {
-		makeRequest(mApiService.getAwws(), callback);
-	}
-
-	private void makeRequest(final Call<RedditResponse> call, final ApiCallback<RedditResponse> callback) {
-		call.enqueue(new Callback<RedditResponse>() {
-			@Override
-			public void onResponse(Call<RedditResponse> call, Response<RedditResponse> response) {
-				if (!response.isSuccessful()) {
-					callback.onError(new ApiErrorException("Get call failed with", response.code()));
-					return;
-				}
-
-				callback.onSuccess(response.body());
-			}
-
-			@Override
-			public void onFailure(Call<RedditResponse> call, Throwable t) {
-				L.e(TAG, "makeRequest: onFailure", t);
-				callback.onError(new ApiErrorException(t.getMessage()));
-			}
-		});
+	public Observable<RedditResponse> getAwws() {
+		return mApiService.getAwws();
 	}
 }

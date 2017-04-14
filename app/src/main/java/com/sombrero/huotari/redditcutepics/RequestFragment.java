@@ -6,12 +6,19 @@ import android.support.v4.app.Fragment;
 import com.sombrero.huotari.redditcutepics.common.L;
 import com.sombrero.huotari.redditcutepics.models.RedditItem;
 import com.sombrero.huotari.redditcutepics.net.ApiClient;
-import com.sombrero.huotari.redditcutepics.net.ApiErrorException;
 import com.sombrero.huotari.redditcutepics.net.models.DataChild;
 import com.sombrero.huotari.redditcutepics.net.models.Image;
 import com.sombrero.huotari.redditcutepics.net.models.RedditResponse;
 
 import java.util.ArrayList;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class RequestFragment extends Fragment {
 
@@ -20,11 +27,13 @@ public class RequestFragment extends Fragment {
 	private ApiClient mApiClient;
 	private Listener mListener;
 
-	private boolean mFragmentWasPaused;
+	private enum Type {
+		CATS,
+		DOGS,
+		AWWS
+	}
 
-	private ArrayList<RedditItem> mCats;
-	private ArrayList<RedditItem> mDogs;
-	private ArrayList<RedditItem> mAwws;
+	private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 	public interface Listener {
 		void onCats(@NonNull ArrayList<RedditItem> cats);
@@ -52,80 +61,68 @@ public class RequestFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mFragmentWasPaused = false;
-		loadCats();
-		loadDogs();
-		loadAwws();
 
+		makeRequest(Type.CATS, mApiClient.getCats());
+		makeRequest(Type.DOGS, mApiClient.getDogs());
+		makeRequest(Type.AWWS, mApiClient.getAwws());
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mFragmentWasPaused = true;
+
+		compositeDisposable.dispose();
 	}
 
-	private void loadCats() {
-		mApiClient.getCats(new ApiClient.ApiCallback<RedditResponse>() {
+	private void makeRequest(final Type type, Observable<RedditResponse> observable) {
+		DisposableObserver<ArrayList<RedditItem>> observer = new DisposableObserver<ArrayList<RedditItem>>() {
 			@Override
-			public void onSuccess(RedditResponse response) {
-				if (mFragmentWasPaused || getActivity() == null) return;
-
-				mCats = responseToList(response);
-				mListener.onCats(mCats);
+			public void onNext(ArrayList<RedditItem> items) {
+				L.d(TAG, "got request: " + type.name());
+				switch (type) {
+					case CATS:
+						mListener.onCats(items);
+						break;
+					case DOGS:
+						mListener.onDogs(items);
+						break;
+					case AWWS:
+						mListener.onAww(items);
+						break;
+				}
 			}
 
 			@Override
-			public void onError(ApiErrorException e) {
-				if (mFragmentWasPaused || getActivity() == null) return;
-
-				L.e(TAG, "Load cats failed", e);
-
+			public void onError(Throwable e) {
+				L.e(TAG, "Failed request: " + type.name(), e);
 				mListener.onFailed();
 			}
-		});
-	}
-
-	private void loadDogs() {
-		mApiClient.getDogs(new ApiClient.ApiCallback<RedditResponse>() {
-			@Override
-			public void onSuccess(RedditResponse response) {
-				if (mFragmentWasPaused || getActivity() == null) return;
-
-				mDogs = responseToList(response);
-				mListener.onDogs(mDogs);
-			}
 
 			@Override
-			public void onError(ApiErrorException e) {
-				if (mFragmentWasPaused || getActivity() == null) return;
+			public void onComplete() {
+				L.d(TAG, "onComplete: " + type.name());
+				// Do nothing
 
-				L.e(TAG, "Load dogs failed", e);
-
-				mListener.onFailed();
 			}
-		});
-	}
+		};
 
-	private void loadAwws() {
-		mApiClient.getAwws(new ApiClient.ApiCallback<RedditResponse>() {
-			@Override
-			public void onSuccess(RedditResponse response) {
-				if (mFragmentWasPaused || getActivity() == null) return;
+		observable.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.map(new Function<RedditResponse, ArrayList<RedditItem>>() {
+					@Override
+					public ArrayList<RedditItem> apply(RedditResponse redditResponse) throws Exception {
+						return responseToList(redditResponse);
+					}
+				})
+				.doOnDispose(new Action() {
+					@Override
+					public void run() throws Exception {
+						L.d(TAG, "disposing: " + type.name());
+					}
+				})
+				.subscribe(observer);
 
-				mAwws = responseToList(response);
-				mListener.onAww(mAwws);
-			}
-
-			@Override
-			public void onError(ApiErrorException e) {
-				if (mFragmentWasPaused || getActivity() == null) return;
-
-				L.e(TAG, "Load awws failed", e);
-
-				mListener.onFailed();
-			}
-		});
+		compositeDisposable.add(observer);
 	}
 
 	private static ArrayList<RedditItem> responseToList(RedditResponse response) {
