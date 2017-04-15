@@ -68,20 +68,12 @@ public class ContentFragment extends Fragment {
 		}
 
 		loadCurrentImage(imageView);
-		imageView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				loadNextImage(imageView);
-			}
-		});
+		imageView.setOnClickListener(v -> loadNextImage(imageView));
 
 
-		mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				RedditItem item = mItems.get(mCurrentPosition);
-				saveImage(item);
-			}
+		mFloatingActionButton.setOnClickListener(v -> {
+			RedditItem item = mItems.get(mCurrentPosition);
+			saveImage(item);
 		});
 		return view;
 	}

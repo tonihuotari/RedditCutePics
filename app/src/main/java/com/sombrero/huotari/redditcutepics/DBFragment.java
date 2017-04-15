@@ -52,21 +52,18 @@ public class DBFragment extends Fragment {
 	}
 
 	public void loadSavedItems() {
-		RedditItemContract.getItems(mDataBaseHelper, new RedditItemContract.Callback() {
-			@Override
-			public void onResult(ArrayList<RedditItem> items) {
-				if (mFragmentWasPaused || getActivity() == null) return;
+		RedditItemContract.getItems(mDataBaseHelper, items -> {
+			if (mFragmentWasPaused || getActivity() == null) return;
 
-				L.d(TAG, "loaded saved items: " + items.size());
+			L.d(TAG, "loaded saved items: " + items.size());
 
-				mSavedItems = items;
+			mSavedItems = items;
 
-				mSavedIds = new HashSet<>();
-				for (RedditItem item : items) {
-					mSavedIds.add(item.getId());
-				}
-				mListener.onSavedItems(mSavedItems);
+			mSavedIds = new HashSet<>();
+			for (RedditItem item : items) {
+				mSavedIds.add(item.getId());
 			}
+			mListener.onSavedItems(mSavedItems);
 		});
 	}
 

@@ -108,18 +108,8 @@ public class RequestFragment extends Fragment {
 
 		observable.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.map(new Function<RedditResponse, ArrayList<RedditItem>>() {
-					@Override
-					public ArrayList<RedditItem> apply(RedditResponse redditResponse) throws Exception {
-						return responseToList(redditResponse);
-					}
-				})
-				.doOnDispose(new Action() {
-					@Override
-					public void run() throws Exception {
-						L.d(TAG, "disposing: " + type.name());
-					}
-				})
+				.map(RequestFragment::responseToList)
+				.doOnDispose(() -> L.d(TAG, "disposing: " + type.name()))
 				.subscribe(observer);
 
 		compositeDisposable.add(observer);
@@ -128,12 +118,10 @@ public class RequestFragment extends Fragment {
 	private static ArrayList<RedditItem> responseToList(RedditResponse response) {
 		ArrayList<RedditItem> items = new ArrayList<>();
 		if (response.getChildren() != null) {
-			for (DataChild child : response.getChildren()) {
-				if (child.isNotFaulty()) {
-					Image image = child.getFirstImage();
-					items.add(new RedditItem(child.getId(), image.getImageUrl()));
-				}
-			}
+			response.getChildren().stream().filter(DataChild::isNotFaulty).forEach(child -> {
+				Image image = child.getFirstImage();
+				items.add(new RedditItem(child.getId(), image.getImageUrl()));
+			});
 		}
 		return items;
 	}

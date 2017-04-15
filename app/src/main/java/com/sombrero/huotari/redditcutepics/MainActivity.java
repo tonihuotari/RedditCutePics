@@ -27,45 +27,30 @@ public class MainActivity extends AppCompatActivity implements DBFragment.Listen
 
 	public State mCurrentState = State.CATS;
 
-	enum State {
-		CATS(R.string.title_cats),
-		DOGS(R.string.title_dogs),
-		AWW(R.string.title_aww),
-		SAVED(R.string.title_saved);
-
-		private int titleId;
-
-		State(int titleId) {
-			this.titleId = titleId;
-		}
-
-		public int getTitleId() {
-			return titleId;
-		}
+	private enum State {
+		CATS,
+		DOGS,
+		AWW,
+		SAVED
 	}
 
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-			= new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-		@Override
-		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-			switch (item.getItemId()) {
-				case R.id.navigation_cats:
-					setCurrentState(State.CATS);
-					return true;
-				case R.id.navigation_dogs:
-					setCurrentState(State.DOGS);
-					return true;
-				case R.id.navigation_awws:
-					setCurrentState(State.AWW);
-					return true;
-				case R.id.navigation_saved:
-					setCurrentState(State.SAVED);
-					return true;
-			}
-			return false;
+			= item -> {
+		switch (item.getItemId()) {
+			case R.id.navigation_cats:
+				setCurrentState(State.CATS);
+				return true;
+			case R.id.navigation_dogs:
+				setCurrentState(State.DOGS);
+				return true;
+			case R.id.navigation_awws:
+				setCurrentState(State.AWW);
+				return true;
+			case R.id.navigation_saved:
+				setCurrentState(State.SAVED);
+				return true;
 		}
-
+		return false;
 	};
 
 	@Override

@@ -1,7 +1,6 @@
 package com.sombrero.huotari.redditcutepics;
 
 import com.sombrero.huotari.redditcutepics.net.ApiClient;
-import com.sombrero.huotari.redditcutepics.net.ApiErrorException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
